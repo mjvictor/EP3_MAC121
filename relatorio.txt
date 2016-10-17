@@ -1,0 +1,183 @@
+﻿Victor Martins João
+Nº USP: 9793551
+
+
+Relatório EP3 –  MAC 121 – Prof. Carlos Eduardo Ferreira
+
+
+    
+
+    O objetivo desse EP é ordenar um vetor usando apenas o movimento 
+3-reverso, ou seja, inverter uma sequência de 3 números dentro de um vetor, 
+considerando esse vetor um vetor circular, ou seja, a ultima posição sendo 
+vizinha da primeira. Para isso, queria comentar primeiramente algumas 
+situações que observei.
+    Analisando o movimento 3-reverso percebi que ele possui uma limitação, por 
+exemplo, se o tamanho do vetor for par e possuir algum elemento “fora do 
+lugar”, não existe nenhuma sequência de 3-reversões que ordene esse vetor.
+    Para ficar mais claro, vamos supor um vetor v de tamanho igual a 4: 
+
+        v = [1, 3, 2, 4]
+    
+    Esse vetor, ordenado ficaria, assim:
+        
+        v = [1, 2, 3, 4] 
+    
+    Note que, o número 2 e o número 3, estão “fora do lugar”, inicialmente,
+portanto, teriamos que aplicar a 3-reversão para ordená-lo, no entanto, 
+se aplicarmos o movimento de 3-reversão no ndice 1, que contém o número 
+3, ou se aplicarmos no indice 3, que contém o número 4, e como essas são 
+as únicas possibilidades de movimento para tentar ordenar o número 3, 
+teremos sempre a inversão do  3 com o 4, logo não é possível ordenar esse 
+vetor com apenas esse movimento.
+    Mas nem todo vetor par é impossível de ordenar, se eles estiverem “no
+lugar”, ele é possível. O termo “no lugar”, eu defino de uma forma diferente, 
+por exemplo, suponha um vetor v de tamanho 4, dessa forma:
+
+        v = [3, 2, 1, 4]
+
+    Na minha definição, esse vetor possui todos os números no lugar, pois o
+número 3, apesar de não estar na posição final, o índice da posição final
+dele, também é impar, logo está na posição certa. Portanto, um número 
+estar na posição certa ou não, depende primeiramente de estar numa 
+posição de paridade igual a da sua posição final, esse termo vai ser 
+usado mais algumas vezes nesse relatório, por isso achei necessário uma 
+especificação melhor e uma exemplificação para uma melhor clareza.
+
+    Outra ocorrência observada, dessa vez não uma limitação, mas um fato, é
+que todo vetor de tamanho ímpar pode ser ordenado por 3-reverso, pois 
+mesmo que um número não esteja na sua posição “certa”, ao “dar a volta” no 
+vetor circular, se o seu índice era par se torna ímpar e vice-versa. Note que 
+não importa se a volta foi feita da esquerda para a direita ou da direita para 
+a esquerda, no vetor de tamanho ímpar sempre vai ocorrer essa mudança de
+ paridade.
+    
+    Para implementar esse EP, eu separo ele da seguinte forma: 
+        1. Verifica se é possível ou não ordenar.
+        2. Realiza a ordenação.
+    
+    A implementação da parte 1 é feita através da função check_position, a 
+ideia é, percorrer um vetor de tamanho n até o índice n-2, verificando se 
+a 3-reversão é necessária e então aplico ela. Ao final dessa ordenação
+prévia eu verifico se o vetor está ordenado com a função check_sort, além 
+disso eu verifico se o tamanho do vetor é par ou  ímpar,  porque, se for 
+par e ele não está ordenado, isso significa que possui números na posição 
+“errada” e é impossível de ordenar, por isso eu já imprimo uma mensagem 
+dizendo que não é possível e ele adiciono uma flag para ignorar a 
+ordenação, que seria desnecessária.
+
+    Já a parte 2 é implementada da seguinte maneira, na função three_reverse,
+nela existem três verificações, a primeira é para o índice menor que n-2,
+que verifica se é necessária a 3 reversão, caso não precise, verifico se 
+v[i] é maior que v[i+1] (com os indices em módulo n),  se for necessário 
+ele realiza um processo de inversão desses dois valores, esse processo 
+de inversão será comentado melhor posteriormente. Por fim a última 
+verificação é para quando o índice for igual a n-1, na qual é verificado 
+também se v[i] é maior que v[i+1], e inverte se necessário. Todas essas 
+verificações são feitas índice a índice, de acordo com as prioridades do 
+if e else escritas no código. Vale lembrar que cada movimento de 
+3-reversão é armazedo no vetor da struct pos, e ao fim da ordenação essa 
+sequência é impressa na própria função.
+
+    Pensando em uma forma de arrumar os números que estão na posição “errada”,
+eu percebi que invertendo eles eu chegaria na forma ordenada, e essa 
+inversão só é possível para vetores de tamanho ímpar. A inversão funciona 
+da seguinte maneira, se quisermos inverter dois números localizados nas 
+posições i e i+1, de um vetor de tamanho n, basta pegar o v[i], realizar 
+n/2 3-reversões para a esquerda, e em seguida pegar o número que estava 
+em v[i+1], que agora está em v[i+3] (lembrando que tudo está em mod n, 
+pois é um vetor circular), e fazê-lo mais (n/2) – 1 movimentos para a 
+direita. Vou fazer a seguir uma prova por indução para mostrar que isso 
+vale para todo n ímpar.
+    
+    Provando por Indução
+
+    Base: Suponha um vetor de tamanho n = 3,  v = [b, a, c], e queremos
+    inverter os valores de a e b.
+    Seguindo o algoritmo, vamos pegar v[0] = b, e fazer n/2  movimento para a
+    esquerda e em seguida fazermos (n/2 – 1)  movimentos para a direita com o 
+    “a”     e assim, teremos invertido os dois valores.
+    Note que, n/2 = 1 e (n/2) – 1 = 0, portanto, pelo algoritmo, apenas
+    realizando um movimentos pra esquerda, já estaria invertido.
+    Então aplicando uma 3-reversão para a esquerda, seria aplicar uma
+    3-reversão começando no indice i-2, logo a 3-reversão feita nesse caso 
+    será, v[i-2%n] ←→v[i], como i = 0 e n = 3, v[1] ←→ v[0], consequentemente, 
+    após a 3-reversão teremos um vetor v = [a,b,c], como isso provamos a nossa 
+    base.
+
+    Hipótese de Indução: Suponha que para um n ímpar, inverter dois valores 
+    seguidos vale realizar n/2 movimentos para a esquerda com i, e depois n/2 
+    -1 movimentos para a direita com v[i+1], Quero mostrar que vale também 
+    para n+2.
+
+    Passo: Seja um vetor v de tamanho n+2, tal que 
+    v = [x1, x2, …, xi, x(i+1), …, x(n+2)], e que queremos inverter xi com 
+    x(i+1). Como temos n+2 elementos, precisamos percorrer (n+2) – 1 números 
+    até chegarmos em i+1, porém o movimento é de 3-reversão, ou seja, pulamos 
+    os números de 2 em 2, com isso chegamos que são necessários  ((n+2) - 1) 
+    /2, observe que (n+2) é impar, pois n é ímpar, logo (n+2) – 1 é par, no 
+    entanto quando fazemos a divisão inteira, temos que ((n+2) – 1) / 2 =  
+    (n+2)/2, concluimos então que são necessários (n+2)/2 movimentos para 
+    fazer o v[i] = xi chegar na posição i+1. Em seguida, como o último 
+    movimento de xi é trocar com x(i+1), temos agora que v[i+3] = x(i+1). Para 
+    fazermos o x(i+1) chegar na posição i, precisamos percorrer 
+    (n + 2) –  (i + 3) + i números até chegar em i, como o salto é de 2 em 2, 
+    reescrevendo essa expressão temos que,
+
+                ((n+2) – (i+3) + i) / 2 = (n – 1) / 2 = 
+                = (n + 2 – 3) / 2 = ((n+2)/ 2) – (3 / 2)
+
+    Como a divisão inteira de 3/2 é 1 podemos afirmar que, 
+    ((n+2)/ 2) – (3 / 2) = ((n+2)/2) – 1.
+    
+    Com isso provamos que para n+2, continua valendo a fórmula de inversão.
+
+    E é assim que meu programa funciona, ele realiza esses processos até que o 
+vetor esteja ordenado, e como vimos, todo vetor de tamanho ímpar pode ser 
+ordenado, então meu programa funciona para todas as instâncias, dizendo se 
+é possível ou não, se possível imprimindo uma sequência de 3-reversões 
+válidas.
+    Porém análisando o código, percebi que ele pode não ser tão eficiente, sua 
+complexidade é O(n²). Para demonstrar isso precisamos analisar o código em 
+duas partes, a checagem e a ordenação.
+        1. Checagem :
+            Na checagem é realizado um bubble sort adaptado para o movimento 
+            de 3-reversão, e como melhor caso temos um vetor já ordenado, ou 
+            seja, não realiza nenhum movimento. Como pior caso vamos supor a 
+            situação, talvez impossível, de troca em todas as comparações. 
+            Para esse pior caso vamos separar em vetor de tamanho par e ímpar :
+                *Par :
+                    Supondo um vetor de tamanho n, a primeira vez que 
+                    percorremos o vetor, vamos realizar n-2 comparações e 
+                    trocas, a segunda, precorrer o vetor até n-2 e realizar 
+                    n-4 comparações e trocas, assim por diante, como n é par, 
+                    percorreremos esse vetor (n/2) - 1 vezes, e obtemos a 
+                    seguinte PA (2, 4, 6, …, n-2), realizando a soma de PA , 
+                    para (n/2) – 1 elementos chegamos na 
+                    expressão, (2 + (n – 2)) * ((n/2) – 1) / 2 = 
+                            = ((n²/2) – n) / 2 = (n/2)² – (n/2) 
+
+                *Impar:
+                    A forma de percorrer o vetor é igual para esse caso, a 
+                    diferença é que percorrer n/2 vezes o vetor realizando 
+                    trocas, portanto, obteremos a segunte PA (1, 3, 5, …, 
+                    n-2), cuja soma é,   (1 + (n-2)) * (n/2) / 2 = 
+                                        = (n² – n) / 4.
+
+        Esses esses são os dois casos, para a checagem. 
+
+        2.Ordenação.
+            Na ordenação o melhor caso é ele já chegar ordenado também, e o 
+            pior caso é quando ele realiza muitas inversões, o número de 
+            inversões máximo é (n-1)/2, esse n é ímpar, pois é a quantidade de 
+            pares com posições trocadas. Em cada inversão são realizados 
+            (n/2) + (n/2) – 1  movimentos de 3-reversão, logo, (n – 1) trocas. 
+            Com isso chegamos na expressão 
+                        (n-1) * (n-1) / 2 = (n-1)² /2
+
+    Juntando essa duas partes, chegamos que quando n é par, o pior caso é 
+(n/2)² – n/2, tanto para casos possíveis, quanto para casos impossíveis, já 
+quando n é ímpar, o caso máximo é aproximadamente, 
+    ((n-1)² / 2) + ((n² – n) / 2) = (n² – 3n + 1) / 2, mostrando assim que a 
+sua complexidade realmente é O(n²).     
+
